@@ -1,152 +1,66 @@
 import 'package:flutter/material.dart';
 
-class MyFirstPage extends StatefulWidget {
-  const MyFirstPage({super.key});
+// Create a Form widget.
+class MyCustomForm extends StatefulWidget {
+  const MyCustomForm({super.key});
 
   @override
-  State<MyFirstPage> createState() => _MyFirstPageState();
+  MyCustomFormState createState() {
+    return MyCustomFormState();
+  }
 }
 
-class _MyFirstPageState extends State<MyFirstPage> {
+// Create a corresponding State class.
+// This class holds data related to the form.
+class MyCustomFormState extends State<MyCustomForm> {
+  // Create a global key that uniquely identifies the Form widget
+  // and allows validation of the form.
+  //
+  // Note: This is a GlobalKey<FormState>,
+  // not a GlobalKey<MyCustomFormState>.
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
+    // Build a Form widget using the _formKey created above.
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: CustomScrollView(
-        slivers: <Widget>[
-          SliverAppBar(
-            floating: true,
-            snap: true,
-            pinned: true,
-            flexibleSpace: flexibleSpaceContainer(),
-            expandedHeight: 220,
-            backgroundColor: Colors.white,
+      body: Center(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextFormField(
+                decoration: const InputDecoration(
+                    filled: true, fillColor: Colors.blueAccent),
+                // The validator receives the text that the user has entered.
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter some text';
+                  }
+                  return null;
+                },
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Validate returns true if the form is valid, or false otherwise.
+                    if (_formKey.currentState!.validate()) {
+                      // If the form is valid, display a snackbar. In the real world,
+                      // you'd often call a server or save the information in a database.
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Processing Data')),
+                      );
+                    }
+                  },
+                  child: const Text('Submit'),
+                ),
+              ),
+            ],
           ),
-          sliverlist()
-        ],
-      ),
-    );
-  }
-
-  Expanded flexibleSpaceContainer() {
-    return Expanded(
-      child: ListView(children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            appbar(),
-            startingQuestion(),
-            avatars(),
-          ],
         ),
-      ]),
-    );
-  }
-
-  SliverList sliverlist() {
-    return SliverList(
-        delegate: SliverChildBuilderDelegate(
-      childCount: 1,
-      (context, index) {
-        return Column(
-          children: [
-            radiusContainerMaker(const Color(0xff1c2d27), 200),
-            radiusContainerMaker(Colors.white, 1800),
-          ],
-        );
-      },
-    ));
-  }
-
-  Container radiusContainerMaker(Color color, double height) {
-    return Container(
-      width: double.maxFinite,
-      height: height,
-      decoration: BoxDecoration(
-          color: color,
-          borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(50), topRight: Radius.circular(50))),
-    );
-  }
-
-  Padding avatars() {
-    return const Padding(
-      padding: EdgeInsets.all(30.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.black12,
-            radius: 25,
-          ),
-          CircleAvatar(
-            backgroundColor: Colors.black12,
-            radius: 25,
-          ),
-          CircleAvatar(
-            backgroundColor: Colors.black12,
-            radius: 25,
-          ),
-          CircleAvatar(
-            backgroundColor: Colors.black12,
-            radius: 25,
-          ),
-        ],
       ),
-    );
-  }
-
-  Padding startingQuestion() {
-    return const Padding(
-      padding: EdgeInsets.all(10.0),
-      child: Text(
-        'how do you feel today?',
-        style: TextStyle(fontSize: 23, color: Colors.black),
-      ),
-    );
-  }
-
-  Padding appbar() {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          //profile image
-          profileimageANDname(),
-          //action icon
-          const Icon(
-            Icons.bubble_chart_outlined,
-            color: Colors.black54,
-          )
-        ],
-      ),
-    );
-  }
-
-  Row profileimageANDname() {
-    return Row(
-      children: [
-        Container(
-          width: 40,
-          height: 40,
-          color: Colors.grey,
-        ),
-        const SizedBox(width: 10),
-        const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'mahdi haddadi',
-              style: TextStyle(color: Colors.black38),
-            ),
-            Text(
-              'flutter coders',
-              style: TextStyle(color: Colors.black38, fontSize: 10),
-            ),
-          ],
-        ),
-      ],
     );
   }
 }
